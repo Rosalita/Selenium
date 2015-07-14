@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
+from datetime import date
 
 class MyTestCase(unittest.TestCase):
 
@@ -107,6 +108,33 @@ class MyTestCase(unittest.TestCase):
 		
 		#The test can then store the date displayed on the News tab in the variable news_date
 		news_date = self.selenium.find_element_by_css_selector(".networkNotifDateHeader").text
+		
+		#convert this string into a datetime object
+		news_date_time = datetime.strptime(news_date, "%A, %d %B %Y")
+		print (news_date_time)
+		
+		#The test can compare date of news items to the current date, e.g check that.
+		
+		#get the current datetime
+		now_date_time = datetime.now()
+
+
+	
+		
+		
+		if news_date_time < now_date_time:
+			print('news date < now date')
+		else:
+			print('news dates is not < now date')
+		if now_date_time > news_date_time:
+			print ('now date > news date')
+		else:
+			print('now date is not > news date')
+		
+		
+		
+		
+		
 	
 	def tearDown(self):
 		#this is where all all the tidying up after the test is done. It's usually a good idea to close the browser window here.

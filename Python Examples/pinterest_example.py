@@ -17,15 +17,15 @@ class MyTestCase(unittest.TestCase):
 	def setUp(self):
 	#this is where set up for the test is done. This will usually contain code to create a new browser window
 	
-		#uncomment the two below lines to run test on remote server
-        #remoteHost = os.environ['HOST_IP']
-        #self.selenium = webdriver.Remote(command_executor='http://'+remoteHost+':4444/wd/hub',desired_capabilities=webdriver.DesiredCapabilities().CHROME)
+		#Uncomment the two below lines to run this test on a remote server
+		#remoteHost = os.environ['HOST_IP']
+		#self.selenium = webdriver.Remote(command_executor='http://'+remoteHost+':4444/wd/hub',desired_capabilities=webdriver.DesiredCapabilities().CHROME)
 		
-		#uncomment below lines to run locally in Chrome, you will need to download chromedriver.exe 
+		#Uncomment below lines to run the test locally in Chrome, you will need to download chromedriver.exe 
 		#from https://sites.google.com/a/chromium.org/chromedriver/downloads and set the path to this file
 		self.selenium = webdriver.Chrome('C:\Python34\chromedriver.exe')
 		
-		#uncomment below line to run locally in Firefox
+		#Uncomment below line to run the test locally in Firefox
 		#self.selenium = webdriver.Firefox()
 
 	def log_in(self, username, password):
@@ -44,9 +44,9 @@ class MyTestCase(unittest.TestCase):
 		#Special keys like the Return key can also be sent
 		password_box.send_keys(Keys.RETURN)
 		
-		#an implicit wait is where the code will wait a set time or until a condition is met
+		#An implicit wait is where the code will wait a set time or until a condition is met
 		#The find 'Friends to Follow' element is present on the page after logging in 
-		#the line below waits either 20 seconds or until the find friends element is displayed
+		#The line below waits either 20 seconds or until the find friends element is displayed
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_id('friendsToFollow').is_displayed())
 
 		return
@@ -66,25 +66,25 @@ class MyTestCase(unittest.TestCase):
 		#However there will be times where the site is awkward and using a short explicit wait can be easier
 		
 		#After navigating to the URL, the test will wait either 20 seconds for the email input box is displayed.
-		#if the email input box is not displayed within 20 seconds, the test will fail.
+		#If the email input box is not displayed within 20 seconds, the test will fail.
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_id('userEmail').is_displayed())
 		
 		#It is possible to tell the test to wait explicitly for set number of seconds regardless of what is displayed.
 		#Generally its best to try avoid explicit waits as they can slow down the running of a test. 
 		#However sometimes an explicit wait of 1 second can be the most efficient way of working around awkward page elements.  
-		#below is an example of an explicit wait which waits for 2 seconds
+		#Below is an example of an explicit wait which waits for 2 seconds
 		time.sleep(2)
 	
 		user_email = 'justaseleniumtest@gmail.com'
 		
-		#functions can be called in the test, like the below call to the log_in function 
+		#Functions can be called in the test, like the below call to the log_in function 
 		self.log_in(user_email,'thisisatest')
 		
 		#As well as selecting page elements by their ids, it is possible to select them by css selector
 		#The line below selects the element which has the <div class="usernameLink">
 		username = self.selenium.find_element_by_css_selector(".usernameLink")
 		
-		#it can sometimes be useful to output text to the console,
+		#It can sometimes be useful to output text to the console,
 		#This can be done using simple print statements
 		print ('Successfully logged in : '+ str(username.text) +' is the username displayed on page')
 		
@@ -99,9 +99,9 @@ class MyTestCase(unittest.TestCase):
 		self.assertIn("Pinterest: discover and save creative ideas", self.selenium.title)
 		
 		#It is also possible to assert that things are not present 
-		#like checking admin options are not present for non-admin users - which is an important test!
+		#Like checking admin options are not present for non-admin users - which is an important test!
 		#The below lines place the source code of the page into a variable named src 
-		#and then checks that 'Error 404' is not present in the page source
+		#And then checks that 'Error 404' is not present in the page source
 		src = self.selenium.page_source
 		self.assertNotIn("Error 404", src)
 			
@@ -113,10 +113,10 @@ class MyTestCase(unittest.TestCase):
 		#The test can then store the date displayed on the News tab in the variable news_date
 		news_date = self.selenium.find_element_by_css_selector(".networkNotifDateHeader").text
 		
-		#convert this string into a datetime object
+		#Convert this string into a datetime object
 		news_date_time = datetime.strptime(news_date, "%A, %d %B %Y")
 		
-		#get the current datetime as a dateime object
+		#Get the current datetime as a dateime object
 		now_date_time = datetime.now()
 		
 		#The test can then compare date of news items to the current date, to ensure that news items do not display a date in the future. 
@@ -132,7 +132,7 @@ class MyTestCase(unittest.TestCase):
 		#Click on the Invite friends button.
 		button_to_click = self.selenium.find_elements_by_css_selector(".buttonHolder")[1].click()
 		
-		#wait for Invite friends window to load, test waits for the the mail icon to be displayed before proceeding. 
+		#Wait for Invite friends window to load, test waits for the the mail icon to be displayed before proceeding. 
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".mailIcon").is_displayed())
 		
 		#Once the Invite friends options are displayed, identify the email text input box. 
@@ -153,10 +153,10 @@ class MyTestCase(unittest.TestCase):
 		email_address_box.send_keys(email_alias)
 		email_address_box.send_keys(Keys.RETURN)
 		
-		#wait until the invite confirmation message is displayed.
+		#Wait until the invite confirmation message is displayed.
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".inviteConfirm").is_displayed())
 		
-		#scrape the text off the invite confirmation window and store it in variable invite_confirmation_text
+		#Scrape the text off the invite confirmation window and store it in variable invite_confirmation_text
 		invite_confirmation_text = self.selenium.find_element_by_css_selector(".inviteConfirm").text
 		self.assertEqual(invite_confirmation_text, 'Invitations sent!')
 		
@@ -164,13 +164,11 @@ class MyTestCase(unittest.TestCase):
 		time.sleep(5)
 		
 		#Test sending a second invite to the same email address again
-		
 		email_address_box.send_keys(email_alias)
 		email_address_box.send_keys(Keys.RETURN)
 		
-		#wait until the message 'Ooops! You've already invited that person' is displayed.
+		#Wait until the message 'Ooops! You've already invited that person' is displayed.
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".body").is_displayed())
-		#time.sleep(5)
 		message_text = self.selenium.find_element_by_css_selector(".body").text
 		
 		#Assert the correct text is displayed when trying to invite the email address a second time.

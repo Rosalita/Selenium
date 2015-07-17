@@ -1,4 +1,5 @@
 import unittest
+import calendar
 import time
 import os
 
@@ -32,21 +33,21 @@ class MyTestCase(unittest.TestCase):
 		#this is an example of a function to log in 
 		
 		#Identify the email input box by its id tags
-		emailaddressbox = self.selenium.find_element_by_id('userEmail')
+		email_address_box = self.selenium.find_element_by_id('userEmail')
 		#sendkeys is used to type text into input boxes
-		emailaddressbox.send_keys(username)
+		email_address_box.send_keys(username)
 		
 		#Type in a password too
-		passwordbox = self.selenium.find_element_by_id('userPassword')
-		passwordbox.send_keys(password)
+		password_box = self.selenium.find_element_by_id('userPassword')
+		password_box.send_keys(password)
 		
 		#Special keys like the Return key can also be sent
-		passwordbox.send_keys(Keys.RETURN);
+		password_box.send_keys(Keys.RETURN)
 		
 		#an implicit wait is where the code will wait a set time or until a condition is met
 		#The find 'Friends to Follow' element is present on the page after logging in 
 		#the line below waits either 20 seconds or until the find friends element is displayed
-		WebDriverWait(self.selenium, 20).until(lambda s: s.find_element_by_id('friendsToFollow').is_displayed())
+		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_id('friendsToFollow').is_displayed())
 
 		return
 		
@@ -66,7 +67,7 @@ class MyTestCase(unittest.TestCase):
 		
 		#After navigating to the URL, the test will wait either 20 seconds for the email input box is displayed.
 		#if the email input box is not displayed within 20 seconds, the test will fail.
-		WebDriverWait(self.selenium, 20).until(lambda s: s.find_element_by_id('userEmail').is_displayed())
+		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_id('userEmail').is_displayed())
 		
 		#It is possible to tell the test to wait explicitly for set number of seconds regardless of what is displayed.
 		#Generally its best to try avoid explicit waits as they can slow down the running of a test. 
@@ -74,8 +75,10 @@ class MyTestCase(unittest.TestCase):
 		#below is an example of an explicit wait which waits for 2 seconds
 		time.sleep(2)
 	
+		user_email = 'justaseleniumtest@gmail.com'
+		
 		#functions can be called in the test, like the below call to the log_in function 
-		self.log_in('justaseleniumtest@gmail.com','thisisatest')
+		self.log_in(user_email,'thisisatest')
 		
 		#As well as selecting page elements by their ids, it is possible to select them by css selector
 		#The line below selects the element which has the <div class="usernameLink">
@@ -101,39 +104,78 @@ class MyTestCase(unittest.TestCase):
 		#and then checks that 'Error 404' is not present in the page source
 		src = self.selenium.page_source
 		self.assertNotIn("Error 404", src)
-		
-		#The lines below click on the conversation button, and wait for the menu to open
+			
+		#The lines below click on the Notification / Conversation button, and wait for the menu to open
 		button_to_click = self.selenium.find_element_by_xpath("html/body/div[1]/div[1]/div[2]/div[1]/div/button[1]").click()
-		WebDriverWait(self.selenium, 20).until(lambda s: s.find_element_by_css_selector(".networkNotifDateHeader").is_displayed())
+		
+		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".networkNotifDateHeader").is_displayed())
 		
 		#The test can then store the date displayed on the News tab in the variable news_date
 		news_date = self.selenium.find_element_by_css_selector(".networkNotifDateHeader").text
 		
 		#convert this string into a datetime object
 		news_date_time = datetime.strptime(news_date, "%A, %d %B %Y")
-		print (news_date_time)
 		
-		#The test can compare date of news items to the current date, e.g check that.
-		
-		#get the current datetime
+		#get the current datetime as a dateime object
 		now_date_time = datetime.now()
-
-
+		
+		#The test can then compare date of news items to the current date, to ensure that news items do not display a date in the future. 
+		assert (news_date_time <= now_date_time), "Test Fail: Date of news item occurs in the future"
 	
+		#Next the test wants to access the invite friends options, however there are multiple elements on the page which share the class 'buttonHolder' 
+		#The first element on the page with the class 'buttonHolder is the 'Follow new Interests' button, the second is the 'Invite friends' button.
+		#The test wants to click on the second button which uses the class 'buttonHolder'. 
+		#By using find elements, instead of find element, selenium will return more than one element 
+		#self.selenium.find_elements_by_css_selector(".buttonHolder")[0] will return the first element with class 'buttonHolder'
+		#self.selenium.find_elements_by_css_selector(".buttonHolder")[1] will return the second element with class 'buttonHolder'
 		
+		#Click on the Invite friends button.
+		button_to_click = self.selenium.find_elements_by_css_selector(".buttonHolder")[1].click()
 		
-		if news_date_time < now_date_time:
-			print('news date < now date')
-		else:
-			print('news dates is not < now date')
-		if now_date_time > news_date_time:
-			print ('now date > news date')
-		else:
-			print('now date is not > news date')
+		#wait for Invite friends window to load, test waits for the the mail icon to be displayed before proceeding. 
+		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".mailIcon").is_displayed())
 		
+		#Once the Invite friends options are displayed, identify the email text input box. 
+		email_address_box = self.selenium.find_element_by_name('email')
 		
+		#The test needs to type in a unique email address which has not been sent an invite before.
+		#This email address needs to be unique each time the test runs.
+		#To meet both of these criteria, the test is going to enter a gmail alias to a valid gmail email account. 
+		#Gmail supports email aliases by adding '+something' to the first part of address, email sent to aliases is received by the main gmail account.
+		#Software generally can't tell the difference between a valid email address and a valid gmail alias and Pinterest is no exception to this.
+		#To make a valid gmail alias for testing, the test is going to append the current epochtime to the current user's gmail address.
+		#The alias would look something like: justaseleniumtest+1437131756@gmail.com
 		
+		epoch_time_now = calendar.timegm(time.gmtime())	
+		email_alias = 'justaseleniumtest+'+ str(epoch_time_now) +'@gmail.com'		
+		print(email_alias)
 		
+		email_address_box.send_keys(email_alias)
+		email_address_box.send_keys(Keys.RETURN)
+		
+		#wait until the invite confirmation message is displayed.
+		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".inviteConfirm").is_displayed())
+		
+		#scrape the text off the invite confirmation window and store it in variable invite_confirmation_text
+		invite_confirmation_text = self.selenium.find_element_by_css_selector(".inviteConfirm").text
+		self.assertEqual(invite_confirmation_text, 'Invitations sent!')
+		
+		#The 'Invitations sent!' message times out within 5 seconds and closes itself, wait for it to close.
+		time.sleep(5)
+		
+		#Test sending a second invite to the same email address again
+		
+		email_address_box.send_keys(email_alias)
+		email_address_box.send_keys(Keys.RETURN)
+		
+		#wait until the message 'Ooops! You've already invited that person' is displayed.
+		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_css_selector(".body").is_displayed())
+		#time.sleep(5)
+		message_text = self.selenium.find_element_by_css_selector(".body").text
+		
+		#Assert the correct text is displayed when trying to invite the email address a second time.
+		assert(message_text == "Oops! You've already invited that person."), "Unexpected text is displayed"
+	
 		
 	
 	def tearDown(self):

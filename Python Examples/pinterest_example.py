@@ -46,7 +46,7 @@ class MyTestCase(unittest.TestCase):
 		
 		#An implicit wait is where the code will wait a set time or until a condition is met
 		#The find 'Friends to Follow' element is present on the page after logging in 
-		#The line below waits either 20 seconds or until the find friends element is displayed
+		#The line below waits either 30 seconds or until the find friends element is displayed
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_id('friendsToFollow').is_displayed())
 
 		return
@@ -65,8 +65,8 @@ class MyTestCase(unittest.TestCase):
 		#This can be done with implicit an explicit waits. Generally implicit waits should be used wherever possible
 		#However there will be times where the site is awkward and using a short explicit wait can be easier
 		
-		#After navigating to the URL, the test will wait either 20 seconds for the email input box is displayed.
-		#If the email input box is not displayed within 20 seconds, the test will fail.
+		#After navigating to the URL, the test will wait either 30 seconds for the email input box is displayed.
+		#If the email input box is not displayed within 30 seconds, the test will fail.
 		WebDriverWait(self.selenium, 30).until(lambda s: s.find_element_by_id('userEmail').is_displayed())
 		
 		#It is possible to tell the test to wait explicitly for set number of seconds regardless of what is displayed.

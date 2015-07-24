@@ -15,7 +15,7 @@ from datetime import date
 class MyTestCase(unittest.TestCase):
 
 	def setUp(self):
-	#this is where set up for the test is done. This will usually contain code to create a new browser window
+		#this is where set up for the test is done. This will usually contain code to create a new browser window
 	
 		#Uncomment the two below lines to run this test on a remote server
 		#remoteHost = os.environ['HOST_IP']
@@ -53,7 +53,7 @@ class MyTestCase(unittest.TestCase):
 		
 		
 	def test_stuff(self):
-	#This function contains the main body of code for the test
+		#This function contains the main body of code for the test
 	
 		#The first thing this test does is navigate to site being tested.
 		self.selenium.get('https://www.pinterest.com/')
@@ -174,12 +174,9 @@ class MyTestCase(unittest.TestCase):
 		#Assert the correct text is displayed when trying to invite the email address a second time.
 		assert(message_text == "Oops! You've already invited that person."), "Unexpected text is displayed"
 	
-		
-	
 	def tearDown(self):
 		#this is where all all the tidying up after the test is done. It's usually a good idea to close the browser window here.
 		self.selenium.quit()
-	
 
 #The lines below are part of the unit test framework which tell Pytest to run the test 
 if __name__=="__main__":

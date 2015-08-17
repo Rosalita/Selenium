@@ -10,7 +10,7 @@ module.exports = {
       .click('.Button.Module.btn[type=submit]')
       .pause(2000)
       .verify.visible('input[class=hasError]')
-      .verify
+      .end();
     },
 
 // To Do

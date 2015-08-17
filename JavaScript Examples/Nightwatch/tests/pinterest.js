@@ -23,6 +23,8 @@ module.exports = {
     _browser
       .url('https://www.pinterest.com/')
       .waitForElementVisible( 'body', 1000 )
+      .assert.title("Pinterest: discover and save creative ideas")
+
       // attempt to sign up with blank email address and blank password
       .keys(['\uE004']) //presses TAB key
       .keys(['\uE004']) //presses TAB key
@@ -72,6 +74,8 @@ module.exports = {
       .setValue('#userPassword', 'thisisatest')
       .keys(['\uE006']) //presses ENTER key.
       .waitForElementVisible('.Input.Module.field', 10000) // waits for the searchbar to be visible before continuing
+      .assert.containsText('.profileName', 'justa')
+      .end();
 },
 
 

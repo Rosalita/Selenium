@@ -28,6 +28,7 @@ module.exports = {
       // Timeout must be set to prevent errors
       setTimeout(function(){done();},200);
     },
+
     'Test a path through all the error messages on the sign up form': function(_browser) {
     _browser
 
@@ -40,8 +41,10 @@ module.exports = {
       .assert.elementPresent('#userPassword')
 
       // asserts attributeEquals and attributeContains can be used to test the placeholder text these input boxes
-      .assert.attributeEquals('#userEmail','placeholder','Email') // assert 'Email' equals 'Email'
-      .assert.attributeContains('#userPassword','placeholder','password') // assert 'Create a password' contains 'password'
+      // assert 'Email' equals 'Email'
+      .assert.attributeEquals('#userEmail','placeholder','Email')
+      // assert 'Create a password' contains 'password'
+      .assert.attributeContains('#userPassword','placeholder','password')
 
       // attempt to sign up with blank email address and blank password
       // navigation through forms can be done by sending key presses using .keys
@@ -51,7 +54,8 @@ module.exports = {
       .waitForElementVisible('.errorTooltip.emailError', 5000)
       .verify.visible('.errorTooltip.emailError') // if a verify fails, the test will continue
       .assert.visible('.errorTooltip.emailError') // if an assert fails, the test will stop
-      .assert.containsText('.errorTooltip.emailError', 'You missed a bit! Don\'t forget to add your email.') // Test the message
+      // Test the message is correct
+      .assert.containsText('.errorTooltip.emailError', 'You missed a bit! Don\'t forget to add your email.')
 
       // attempt to sign up setting email to a 4 character string and leaving password blank
       .setValue('#userEmail', 'test' ) // type 'test' into the email input box
@@ -65,13 +69,19 @@ module.exports = {
       .setValue('#userEmail', 'justaseleniumtest@gmail.com')
       .click('.signupButton')
       // assert that the email error message is now a password error message
-      // the email error element is <div id="firstStepTooltip" class="errorTooltip emailError" style="display: block;">
-      // the password error element is <div id="firstStepTooltip" class="errorTooltip emailError passwordError" style="display: block;">
-      // so need to check the element with ID firstStepTooltip has the class errorTooltip emailError passwordError
-      // this can be done with the assert cssClassPresent however there is a bug in Nightwatch version v0.7.10
-      // The below line can be uncommented when this issue is fixed https://github.com/nightwatchjs/nightwatch/issues/608
+      // the email error element is:
+      // <div id="firstStepTooltip" class="errorTooltip emailError" style="display: block;">
+      // the password error element is:
+      // <div id="firstStepTooltip" class="errorTooltip emailError passwordError" style="display: block;">
+      // so need to check the element with ID firstStepTooltip
+      // has the class errorTooltip emailError passwordError
+      // this can be done with the assert cssClassPresent
+      //however there is a bug in Nightwatch version v0.7.10
+      // when this issue is fixed:
+      // https://github.com/nightwatchjs/nightwatch/issues/608
+      // The below line can be uncommented
       // .assert.cssClassPresent('#firstStepTooltip', 'errorTooltip emailError passwordError')
-      // however cssClassNotPresent is currently working, so for now will assert that the error element is not an email error
+      // work around for now will assert that the error element is not an email error instead
       .assert.cssClassNotPresent('#firstStepTooltip', 'errorTooltip emailError')
       .waitForElementVisible('.errorTooltip.emailError.passwordError', 5000)
       .verify.visible('.errorTooltip.emailError.passwordError')
@@ -99,7 +109,6 @@ module.exports = {
       .refresh()
       .assert.elementNotPresent('.errorTooltip.emailError')
       .assert.elementNotPresent('.errorTooltip.emailError.passwordError')
-
     },
 
     'Login with valid credentials and do some testing': function( _browser ) {
@@ -113,14 +122,18 @@ module.exports = {
       .click('.Button.DropdownButton.Module.btn.categoriesHeader')  // click on the categories dropdown
       .pause(5000)
       // assert that all the categories are present on the categories menu
-      .assert.containsText('.categoriesWrapper ', 'Home feed\nPopular\nEverything\nAnimals & Pets\nArchitecture\nArt\nCars & Motorcycles')
-      .assert.containsText('.categoriesWrapper ', '\nCelebrations & Events\nCelebrities\nDesign\nEducation\nFilm, Music & Books\nFood & Drink')
-      .assert.containsText('.categoriesWrapper ', '\nGardening\nGeek\nHair & Beauty\nHealth & Fitness\nHistory\nHobbies & Crafts\nHome Décor')
-      .assert.containsText('.categoriesWrapper ', '\nHumour\nIllustrations & Posters\nKids & Parenting\nMen\'s Fashion\nOutdoors\nPhotography')
-      .assert.containsText('.categoriesWrapper ', '\nProducts\nQuotes\nScience & Nature\nSports\nTattoos\nTechnology\nTravel\nWeddings\nWomen\'s Fashion')
-      // For debugging purposes it is possible to output all the text from the categories menu by uncommenting the function below
+      .assert.containsText('.categoriesWrapper ', 'Home feed\nPopular\nEverything\nAnimals & Pets\nArchitecture')
+      .assert.containsText('.categoriesWrapper ', '\nArt\nCars & Motorcycles\nCelebrations & Events\nCelebrities')
+      .assert.containsText('.categoriesWrapper ', '\nDesign\nEducation\nFilm, Music & Books\nFood & Drink\nGardening')
+      .assert.containsText('.categoriesWrapper ', '\nGeek\nHair & Beauty\nHealth & Fitness\nHistory\nHobbies & Crafts')
+      .assert.containsText('.categoriesWrapper ', '\nHome Décor\nHumour\nIllustrations & Posters\nKids & Parenting')
+      .assert.containsText('.categoriesWrapper ', '\nMen\'s Fashion\nOutdoors\nPhotography\nProducts\nQuotes')
+      .assert.containsText('.categoriesWrapper ', '\nScience & Nature\nSports\nTattoos\nTechnology\nTravel\nWeddings')
+      .assert.containsText('.categoriesWrapper ', '\nWomen\'s Fashion')
+      // For debugging purposes it is possible to output all the text
+      // from the categories menu by uncommenting the function below
       //.getText('.categoriesWrapper ', function(result){
-      //  console.log(result.value)
+      //  console.log(result)
       //});
       .click('a[data-category="popular"') // click on the Popular option
       .pause(5000)
@@ -154,5 +167,4 @@ module.exports = {
       .waitForElementVisible('form[class="standardForm"]', 10000)
       .assert.containsText('.body', 'Oops! You\'ve already invited that person.')
 },
-
 }
